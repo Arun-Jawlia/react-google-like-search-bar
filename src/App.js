@@ -1,23 +1,48 @@
-import logo from './logo.svg';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
+import SearchBar from './components/SearchBar';
+import {countries} from './utilis/Api'
 
 function App() {
+const [query, setQuery] = useState('')
+const [suggestion, setSuggestion] = useState([])
+
+
+
+const queryHandler = useCallback(val =>
+  {
+    setQuery(val)
+  },[])
+ 
+
+
+  // Filtering the countries based on the value entered in the input box
+useEffect(()=>
+{
+  if(query ==='')
+  {
+    setSuggestion([])
+  }else{
+    let inputText = query.toLowerCase()
+    let newSuggestion  = countries.filter(item=>
+      {
+      return  item.country.toLowerCase().indexOf(inputText)!==-1 ? true : false;
+      }).map(item=>item.country)
+
+      console.log(newSuggestion)
+      setSuggestion(newSuggestion)
+  }
+
+
+},[query])
+
+
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <h3>Search Query is {query}</h3>
+    <SearchBar suggestion={suggestion} setQuery={setQuery} queryHandler = {queryHandler} />
     </div>
   );
 }
